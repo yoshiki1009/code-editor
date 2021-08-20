@@ -24,7 +24,7 @@ const reducer = produce((state: CellsState = initialState, action: Action) => {
     case ActionType.UPDATE_CELL:
       // using immer
       state.data[action.payload.id].content = action.payload.content;
-      return;
+      return state;
 
     // Code without immer
     // return {
@@ -41,7 +41,7 @@ const reducer = produce((state: CellsState = initialState, action: Action) => {
     case ActionType.DELETE_CELL:
       delete state.data[action.payload];
       state.order = state.order.filter((id) => id !== action.payload);
-      return;
+      return state;
 
     case ActionType.MOVE_CELL:
       const { direction } = action.payload;
@@ -49,12 +49,12 @@ const reducer = produce((state: CellsState = initialState, action: Action) => {
       const targetIndex = direction === 'up' ? index - 1 : index + 1;
 
       if (targetIndex < 0 || targetIndex > state.order.length - 1) {
-        return;
+        return state;
       }
       //swap order
       state.order[index] = state.order[targetIndex];
       state.order[targetIndex] = action.payload.id;
-      return;
+      return state;
 
     case ActionType.INSERT_CELL_BEFORE:
       const cell: Cell = {
@@ -79,7 +79,7 @@ const reducer = produce((state: CellsState = initialState, action: Action) => {
     default:
       return state;
   }
-});
+}, initialState);
 
 //create 5 didits random id using 0-9 and a-z
 const randomId = () => {
